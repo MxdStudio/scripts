@@ -14,7 +14,6 @@ echo "* -------------------------------------------- *"
 echo "* | MxdStudio自用VPS初始化脚本               | *"
 echo "* |                                          | *"
 echo "* | 作      者: MxdStudio                    | *"
-echo "* | 最后更新日: 2018-11-28                   | *"
 echo "* -------------------------------------------- *"
 echo "************************************************"
 echo " "
@@ -85,10 +84,10 @@ echo "#############################################"
 #设置主机名
 echo " "
 echo "开始设置主机名及本机HOST ..."
-hostnamectl --static set-hostname ${subdomain}.api.m2.work
-hostnamectl --transient set-hostname ${subdomain}.api.m2.work
-hostnamectl --pretty set-hostname ${subdomain}.api.m2.work
-echo "127.0.0.1 ${subdomain}.api.m2.work" >> /etc/hosts
+hostnamectl --static set-hostname ${fulldomain}
+hostnamectl --transient set-hostname ${fulldomain}
+hostnamectl --pretty set-hostname ${fulldomain}
+echo "127.0.0.1 ${fulldomain}" >> /etc/hosts
 echo " "
 echo "#############################################"
 echo "设置主机名及本机HOST完成 !"
@@ -419,10 +418,10 @@ curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.ServerSta
     echo ".."
     echo "..."
     echo "[program:ServerStatus-Client-Linux-${s_name}]
-command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-linux.py SERVER=${s_ip} USER=${subdomain} PASSWORD=so-hard-to-guess-3edcEDC#,. INTERVAL=2
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-linux.py SERVER=${s_ip} USER=${subdomain} PASSWORD=%(ENV_S_PASS)s INTERVAL=2
 autorestart=true
 autostart=true
-redirect_stderr=true
+redirect_stderr=false
 stderr_logfile=/root/mxd-repo/log/serversts-client/serversts-client-linux-${s_name}.err.log
 stderr_logfile_maxbytes=500KB
 stderr_logfile_backups=50
@@ -439,10 +438,10 @@ serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-Linux-
     echo ".."
     echo "..."
     echo "[program:ServerStatus-Client-PSUtil-${s_name}]
-command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-psutil.py SERVER=${s_ip} USER=${subdomain} PASSWORD=so-hard-to-guess-3edcEDC#,. INTERVAL=2
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-psutil.py SERVER=${s_ip} USER=${subdomain} PASSWORD=%(ENV_S_PASS)s INTERVAL=2
 autorestart=false
 autostart=false
-redirect_stderr=true
+redirect_stderr=false
 stderr_logfile=/root/mxd-repo/log/serversts-client/serversts-client-psutil-${s_name}.err.log
 stderr_logfile_maxbytes=500KB
 stderr_logfile_backups=50
