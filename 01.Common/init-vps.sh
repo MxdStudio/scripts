@@ -452,7 +452,7 @@ user=root
 serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-PSUtil-${s_name}.ini
     echo "...."
     echo "......"
-    echo "***** 生成PSUtil客户端upervisor配置文件完成! *****"
+    echo "***** 生成PSUtil客户端Supervisor配置文件完成! *****"
 done
 
 #安装supervisor
