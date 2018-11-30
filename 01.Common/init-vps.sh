@@ -317,7 +317,7 @@ echo " #############################################"
 #安装libsodium
 echo " "
 echo " 安装libsodium ..."
-curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/install_libsodium.sh | sh
+curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/install_libsodium.sh | sh
 echo " "
 echo " #############################################"
 echo " 安装libsodium完成 !"
