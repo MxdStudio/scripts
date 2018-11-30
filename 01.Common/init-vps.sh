@@ -392,7 +392,6 @@ echo " #############################################"
 
 
 #配置ServerStatus客户端
-#TO-DO
 echo " "
 echo " 下载ServerStatus客户端 ..."
 wget --no-check-certificate -O /root/mxd-repo/scripts/serversts-client/client-linux.py 'https://raw.githubusercontent.com/cppla/ServerStatus/master/clients/client-linux.py'
@@ -401,6 +400,61 @@ echo " "
 echo " #############################################"
 echo " ServerStatus客户端下载完成 !"
 echo " #############################################"
+
+#生成ServerStatus客户端的Supervisor配置文件
+echo " "
+echo " 开始读取Server列表 ..."
+curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.ServerStatusList/serverstatus.list | while read line
+  do
+    s_name=${line%=*}
+    s_ip=${line#*=}
+    echo " ============================================="
+    echo "   开始对接ServerStatus服务"
+    echo "     Server名: ${s_name}"
+    echo "     ServerIP: ${s_ip}"
+    echo " ============================================="
+    echo " "
+    echo " ."
+    echo " .."
+    echo " ..."
+    echo "[program:ServerStatus-Client-Linux-${s_name}]
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-linux.py SERVER=${s_ip} USER=${subdomain} PASSWORD=so-hard-to-guess-3edcEDC#,. INTERVAL=2
+autorestart=true
+autostart=true
+redirect_stderr=true
+stderr_logfile=/root/mxd-repo/log/serversts-client/serversts-client-linux-${s_name}.err.log
+stderr_logfile_maxbytes=500KB
+stderr_logfile_backups=50
+stdout_logfile=/root/mxd-repo/log/serversts-client/serversts-client-linux-${s_name}.out.log
+stdout_logfile_maxbytes=500KB
+stdout_logfile_backups=50
+user=root
+serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-Linux-${s_name}.ini
+    echo " ...."
+    echo " ......"
+    echo " ***** 生成Linux客户端Supervisor配置文件完成! *****"
+    echo " "
+    echo " ."
+    echo " .."
+    echo " ..."
+    echo "[program:ServerStatus-Client-PSUtil-${s_name}]
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-psutil.py SERVER=${s_ip} USER=${subdomain} PASSWORD=so-hard-to-guess-3edcEDC#,. INTERVAL=2
+autorestart=false
+autostart=false
+redirect_stderr=true
+stderr_logfile=/root/mxd-repo/log/serversts-client/serversts-client-psutil-${s_name}.err.log
+stderr_logfile_maxbytes=500KB
+stderr_logfile_backups=50
+stdout_logfile=/root/mxd-repo/log/serversts-client/serversts-client-psutil-${s_name}.out.log
+stdout_logfile_maxbytes=500KB
+stdout_logfile_backups=50
+user=root
+serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-PSUtil-${s_name}.ini
+    echo " "
+    echo " ...."
+    echo " ......"
+    echo " ***** 生成PSUtil客户端upervisor配置文件完成! *****"
+done
 
 #安装supervisor
 echo " "
@@ -411,4 +465,6 @@ echo " "
 echo " #############################################"
 echo " 安装supervisor完成 !"
 echo " #############################################"
+echo " "
+echo " 脚本执行完毕."
 
