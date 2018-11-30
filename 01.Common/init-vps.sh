@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
+sleep 5
 
 #公共变量
 domain=".api.m2.work"
@@ -450,7 +451,6 @@ stdout_logfile_maxbytes=500KB
 stdout_logfile_backups=50
 user=root
 serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-PSUtil-${s_name}.ini
-    echo " "
     echo " ...."
     echo " ......"
     echo " ***** 生成PSUtil客户端upervisor配置文件完成! *****"
