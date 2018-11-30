@@ -1,2 +1,2 @@
-# scripts
-Some scripts
+# 各种自用脚本
+各种，自用，脚本
