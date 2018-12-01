@@ -84,11 +84,13 @@ echo "#############################################"
 #设置主机名
 echo " "
 echo "开始设置主机名及本机HOST ..."
+echo "${fulldomain}" > /etc/hostname
+#hostnamectl --transient set-hostname ${fulldomain}
+#hostnamectl --pretty set-hostname ${fulldomain}
 hostnamectl --static set-hostname ${fulldomain}
-hostnamectl --transient set-hostname ${fulldomain}
-hostnamectl --pretty set-hostname ${fulldomain}
 echo "
-127.0.0.1 ${fulldomain} ${subdomain}" >> /etc/hosts
+127.0.0.1 ${fulldomain} ${subdomain}
+::1       ${fulldomain} ${subdomain}" > /etc/hosts
 echo " "
 echo "#############################################"
 echo "设置主机名及本机HOST完成 !"
@@ -406,7 +408,7 @@ echo "#############################################"
 #生成ServerStatus客户端的Supervisor配置文件
 echo " "
 echo "开始读取Server列表 ..."
-curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.ServerStatusList/serverstatus.list | while read line
+curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/serverstatus.list | while read line
   do
     s_name=${line%=*}
     s_ip=${line#*=}
