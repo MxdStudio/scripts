@@ -23,22 +23,22 @@ echo " "
 #检查参数是否为空
 if [ ! -n "$1" ] ;then
     echo "${CFAILURE}Error: [子域名名称]参数不能为空!${CEND}"
-	exit 1
+    exit 1
 else
     subdomain=$1
-	fulldomain=${subdomain}${domain}
-	echo "#############################################"
-	echo "将使用域名 [${fulldomain}] 来配置本节点"
-	echo "#############################################"
+    fulldomain=${subdomain}${domain}
+    echo "#############################################"
+    echo "将使用域名 [${fulldomain}] 来配置本节点"
+    echo "#############################################"
 fi
 if [ ! -n "$2" ] ;then
     echo "${CFAILURE}Error: [内存数]参数不能为空!${CEND}"
-	exit 1
+    exit 1
 else
-	echo ""
-	echo "#############################################"
-	echo "本机内存为 $2MB"
-	echo "#############################################"
+    echo ""
+    echo "#############################################"
+    echo "本机内存为 $2MB"
+    echo "#############################################"
 fi
 
 
@@ -57,12 +57,12 @@ echo " "
 echo "开始检查Linux分支 ..."
 if [ -f /etc/redhat-release ];then
         OS='CentOS'
-    elif [ ! -z "`cat /etc/issue | grep bian`" ];then
-        OS='Debian'
-    elif [ ! -z "`cat /etc/issue | grep Ubuntu`" ];then
-        OS='Ubuntu'
+#    elif [ ! -z "`cat /etc/issue | grep bian`" ];then
+#        OS='Debian'
+#    elif [ ! -z "`cat /etc/issue | grep Ubuntu`" ];then
+#        OS='Ubuntu'
     else
-        echo " ${CFAILURE}Error: 本脚本支持当前系统, 请重新安装系统或重试!${CEND}"
+        echo " ${CFAILURE}Error: 本脚本只支持CentOS, 不支持当前系统, 请重新安装系统或重试!${CEND}"
         exit 1
 fi
 echo " "
@@ -119,25 +119,25 @@ locale
 #更新并安装基础包
 echo " "
 echo "开始更新并安装基础包 ..."
-if [[ ${OS} == 'CentOS' ]];then
+#if [[ ${OS} == 'CentOS' ]];then
     yum clean all -y
-	yum makecache -y
-	yum erase epel-release -y
-	yum install epel-release -y
+    yum makecache -y
+    yum erase epel-release -y
+    yum install epel-release -y
     yum provides -y '*/applydeltarpm'
-	yum install -y deltarpm
-	yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs
-	yum groupinstall -y "Development Tools"
+    yum install -y deltarpm
+    yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs
+    yum groupinstall -y "Development Tools"
     yum update -y
-	systemctl stop httpd.service
-	yum erase httpd -y
-else
-	apt-get update -y
-	apt-get install -y deltarpm
-	apt-get install -y build-essential curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip
-	apt-get update -y
-	apt-get upgrade -y
-fi
+    systemctl stop httpd.service
+    yum erase httpd -y
+#else
+#   apt-get update -y
+#   apt-get install -y deltarpm
+#   apt-get install -y build-essential curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip
+#   apt-get update -y
+#   apt-get upgrade -y
+#fi
 echo " "
 echo "#############################################"
 echo "更新并安装基础包完成 !"
@@ -346,7 +346,7 @@ bash <(curl -L -s https://install.direct/go.sh)
 systemctl stop v2ray
 systemctl disable v2ray
 service v2ray stop
-update-rc.d -f v2ray remove
+#update-rc.d -f v2ray remove
 systemctl mask v2ray
 rm -rf /lib/systemd/system/v2ray.service
 rm -rf /etc/init.d/v2ray
