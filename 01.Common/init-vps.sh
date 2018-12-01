@@ -87,7 +87,8 @@ echo "开始设置主机名及本机HOST ..."
 hostnamectl --static set-hostname ${fulldomain}
 hostnamectl --transient set-hostname ${fulldomain}
 hostnamectl --pretty set-hostname ${fulldomain}
-echo "127.0.0.1 ${fulldomain}" >> /etc/hosts
+echo "
+127.0.0.1 ${fulldomain} ${subdomain}" >> /etc/hosts
 echo " "
 echo "#############################################"
 echo "设置主机名及本机HOST完成 !"
@@ -99,7 +100,8 @@ echo " "
 echo "开始设置语言及字符集 ..."
 #vi /etc/locale.conf
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-echo "export LC_ALL=en_US.UTF-8" >> /root/.bash_profile
+echo "
+export LC_ALL=en_US.UTF-8" >> /root/.bash_profile
 export LC_ALL=en_US.UTF-8
 echo " "
 echo "#############################################"
@@ -124,7 +126,7 @@ if [[ ${OS} == 'CentOS' ]];then
 	yum install epel-release -y
     yum provides -y '*/applydeltarpm'
 	yum install -y deltarpm
-	yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip
+	yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs
 	yum groupinstall -y "Development Tools"
     yum update -y
 	systemctl stop httpd.service
@@ -161,9 +163,9 @@ ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ntpdate time.windows.com
 ntpdate us.pool.ntp.org
 ntpdate asia.pool.ntp.org
-echo "55 7 * * * ntpdate us.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
-echo "55 15 * * * ntpdate us.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
-echo "55 23 * * * ntpdate asia.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
+echo "55 7 * * * root ntpdate us.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
+echo "55 15 * * * root ntpdate us.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
+echo "55 23 * * * root ntpdate asia.pool.ntp.org >> /root/mxd-repo/log/ntpdate/ntpdate.log" >> /etc/crontab
 echo " "
 echo "#############################################"
 echo "设置时区并同步时间完成 !"
