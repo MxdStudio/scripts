@@ -4,7 +4,7 @@ export PATH
 sleep 5
 
 #公共变量
-domain=".api.m2.work"
+domain=""
 subdomain=""
 fulldomain=""
 
@@ -25,6 +25,8 @@ if [ ! -n "$1" ] ;then
     echo "${CFAILURE}Error: [子域名名称]参数不能为空!${CEND}"
     exit 1
 else
+    domain=`curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/domain-suffix | cat`
+    sleep 2
     subdomain=$1
     fulldomain=${subdomain}${domain}
     echo "#############################################"
@@ -79,8 +81,6 @@ echo "#############################################"
 echo "nofile计算结果为 ${nofile}"
 echo "#############################################"
 
-
-
 #设置主机名
 echo " "
 echo "开始设置主机名及本机HOST ..."
@@ -94,7 +94,7 @@ echo "
 echo " "
 echo "#############################################"
 echo "设置主机名及本机HOST完成 !"
-echo "${subdomain}.api.m2.work"
+hostname
 echo "#############################################"
 
 #设置字符集为UTF8
