@@ -84,10 +84,10 @@ echo "#############################################"
 #设置主机名
 echo " "
 echo "开始设置主机名及本机HOST ..."
-echo "${fulldomain}" > /etc/hostname
-#hostnamectl --transient set-hostname ${fulldomain}
-#hostnamectl --pretty set-hostname ${fulldomain}
+hostnamectl --transient set-hostname ${fulldomain}
+hostnamectl --pretty set-hostname ${fulldomain}
 hostnamectl --static set-hostname ${fulldomain}
+echo "${fulldomain}" > /etc/hostname
 echo "
 127.0.0.1 ${fulldomain} ${subdomain}
 ::1       ${fulldomain} ${subdomain}" > /etc/hosts
@@ -209,7 +209,8 @@ echo "#############################################"
 #设置DNS
 echo " "
 echo "设置DNS ..."
-echo "search vps" > /etc/resolv.conf
+#echo "search vps" > /etc/resolv.conf
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
 echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 echo "nameserver 8.8.4.4" >> /etc/resolv.conf
 echo "nameserver 74.82.42.42" >> /etc/resolv.conf
