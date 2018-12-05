@@ -197,7 +197,7 @@ echo "55 23 * * * root ntpdate asia.pool.ntp.org >> /root/mxd-repo/log/ntpdate/n
 echo " "
 echo "#############################################"
 echo "设置时区并同步时间完成 !"
-date
+date "+%Y-%m-%d %H:%M:%S"
 echo "#############################################"
 
 #禁用SELinux
