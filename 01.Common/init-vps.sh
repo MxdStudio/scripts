@@ -561,7 +561,6 @@ if [ $s_centos_ver -eq "7" ];then
     systemctl enable supervisord.service
 else
     /usr/local/bin/easy_install-2.7 supervisor
-    ln -sf /root/mxd-repo/conf/supervisord/supervisord /etc/sysconfig/supervisord
 	ln -sf /usr/local/bin/supervisorctl /usr/bin/supervisorctl
 	ln -sf /usr/local/bin/supervisord /usr/bin/supervisord
     service supervisord stop
