@@ -149,7 +149,12 @@ echo "开始更新并安装基础包 ..."
     yum makecache -y
     yum provides -y '*/applydeltarpm'
     yum install -y deltarpm
-    yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs daemon
+    if [ $s_centos_ver -eq "7" ];then
+        yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs daemon zlib-devel bzip2-devel openssl-devel xz-libs
+    else
+        #CentOS6的yum最高只能安装到python2.6.6,不能支持ServerStatus客户端执行,故不用yum安装pip
+        yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables git crontabs daemon zlib-devel bzip2-devel openssl-devel xz-libs
+    fi
     yum groupinstall -y "Development Tools"
     yum update -y
     #卸载httpd
@@ -166,6 +171,40 @@ echo "开始更新并安装基础包 ..."
 #   apt-get update -y
 #   apt-get upgrade -y
 #fi
+    #CentOS6单独安装python 2.7.15
+    if [ $s_centos_ver -eq "6" ];then
+        #下载并安装python 2.7
+        mkdir /root/mxd-python-temp
+        wget --no-check-certificate -N -O /root/mxd-python-temp/Python-2.7.15.tar.xz https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tar.xz
+        xz -d /root/mxd-python-temp/Python-2.7.15.tar.xz
+        tar -xvf /root/mxd-python-temp/Python-2.7.15.tar
+        cd /root/mxd-python-temp/Python-2.7.15
+        ./configure --prefix=/usr/local
+        make
+        make altinstall
+        cd /root
+        echo "=========== /usr/local/bin/python2.7版本显示:"
+        /usr/local/bin/python2.7 -V
+        echo "=========== 链接/usr/bin/python到/usr/local/bin/python2.7"
+        ln -sf /usr/local/bin/python2.7 /usr/bin/python
+        echo "=========== /usr/bin/python版本显示:"
+        /usr/bin/python -V
+        #安装setuptools
+        s_setuptools_ver=$(wget -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}') && echo " The Latest version of setuptools : ${s_setuptools_ver}"
+        wget --no-check-certificate -N -O /root/mxd-python-temp/setuptools.tar.gz "https://github.com/pypa/setuptools/archive/v${s_setuptools_ver}.tar.gz"
+        tar -xvf /root/mxd-python-temp/setuptools.tar.gz
+        cd /root/mxd-python-temp/setuptools-${s_setuptools_ver}
+        /usr/local/bin/python2.7 /root/mxd-python-temp/setuptools-${s_setuptools_ver}/bootstrap.py
+        /usr/local/bin/python2.7 /root/mxd-python-temp/setuptools-${s_setuptools_ver}/setup.py install
+        #安装pip
+        curl https://bootstrap.pypa.io/get-pip.py | /usr/local/bin/python2.7 -
+        #指定yum使用python2.6,否则yum将无法执行
+        cp /usr/bin/yum /usr/bin/yum.mxd.bak
+        sed -i '1c #!/usr/bin/python2.6' /usr/bin/yum
+        #清理文件
+        cd /root
+        rm -rf /root/mxd-python-temp
+    fi
 echo " "
 echo "#############################################"
 echo "更新并安装基础包完成 !"
