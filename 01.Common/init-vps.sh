@@ -12,7 +12,7 @@ echo " "
 echo "************************************************"
 echo "* -------------------------------------------- *"
 echo "* | MxdStudio自用VPS初始化脚本               | *"
-echo "* |                                          | *"
+echo "* |   --- 本脚本只适用于CentOS 6 和 7        | *"
 echo "* | 作      者: MxdStudio                    | *"
 echo "* -------------------------------------------- *"
 echo "************************************************"
@@ -54,7 +54,7 @@ echo "ROOT权限检查OK !"
 echo "#############################################"
 
 
-#检查Linux分支
+#检查Linux分支,是否为CentOS
 echo " "
 echo "开始检查Linux分支 ..."
 if [ -f /etc/redhat-release ];then
@@ -72,6 +72,23 @@ echo "#############################################"
 echo "检查Linux分支OK !"
 echo "#############################################"
 
+#检查CentOS版本
+echo " "
+echo "开始检查CentOS版本 ..."
+rpm -q centos-release|cut -d- -f3
+s_centos_ver=`rpm -q centos-release|cut -d- -f3`
+if [ $s_centos_ver -eq "6" -o $s_centos_ver -eq "7" ];then
+        echo "..."
+    else
+        echo " ${CFAILURE}Error: 本脚本只支持CentOS 6 和 7, 不支持当前版本 ${s_centos_ver} , 请重新安装系统或重试!${CEND}"
+        exit 1
+fi
+echo " "
+echo "#############################################"
+echo "检查CentOS版本OK !"
+echo "#############################################"
+
+
 #nofile计算
 echo " "
 echo "开始计算nofile值 ..."
@@ -84,9 +101,11 @@ echo "#############################################"
 #设置主机名
 echo " "
 echo "开始设置主机名及本机HOST ..."
-hostnamectl --transient set-hostname ${fulldomain}
-hostnamectl --pretty set-hostname ${fulldomain}
-hostnamectl --static set-hostname ${fulldomain}
+if [ $s_centos_ver -eq "7" ];then
+        hostnamectl --transient set-hostname ${fulldomain}
+        hostnamectl --pretty set-hostname ${fulldomain}
+        hostnamectl --static set-hostname ${fulldomain}
+fi
 echo "${fulldomain}" > /etc/hostname
 echo "
 127.0.0.1 ${fulldomain} ${subdomain}
@@ -126,12 +145,19 @@ echo "开始更新并安装基础包 ..."
     yum makecache -y
     yum erase epel-release -y
     yum install epel-release -y
+    yum clean all -y
+    yum makecache -y
     yum provides -y '*/applydeltarpm'
     yum install -y deltarpm
-    yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs
+    yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs daemon
     yum groupinstall -y "Development Tools"
     yum update -y
-    systemctl stop httpd.service
+    #卸载httpd
+    if [ $s_centos_ver -eq "7" ];then
+        systemctl stop httpd.service
+    else
+        service httpd stop 
+    fi
     yum erase httpd -y
 #else
 #   apt-get update -y
@@ -233,16 +259,17 @@ echo "#############################################"
 echo "设置limits完成 !"
 echo "#############################################"
 
-
 #关闭firewalld
-echo " "
-echo "关闭firewalld ..."
-systemctl stop firewalld
-systemctl mask firewalld
-echo " "
-echo "#############################################"
-echo "关闭firewalld完成 !"
-echo "#############################################"
+if [ $s_centos_ver -eq "7" ];then
+    echo " "
+    echo "关闭firewalld ..."
+    systemctl stop firewalld
+    systemctl mask firewalld
+    echo " "
+    echo "#############################################"
+    echo "关闭firewalld完成 !"
+    echo "#############################################"
+fi
 
 echo " "
 echo "配置iptables ..."
@@ -291,14 +318,27 @@ iptables -P FORWARD DROP
 
 #保存上述规则
 service iptables save
-#注册iptables服务
-systemctl enable iptables.service
-#开启服务
-systemctl start iptables.service
-#重启服务已确保规则生效(如果防火墙处于已开启状态的话)
-systemctl restart iptables.service
-#查看状态
-systemctl status iptables.service
+#激活iptables
+if [ $s_centos_ver -eq "7" ];then
+    #注册iptables服务
+    systemctl enable iptables.service
+    #开启服务
+    systemctl start iptables.service
+    #重启服务已确保规则生效(如果防火墙处于已开启状态的话)
+    systemctl restart iptables.service
+    #查看状态
+    systemctl status iptables.service
+else
+    #注册iptables服务
+    chkconfig --add iptables
+    chkconfig iptables on
+    #开启服务
+    service iptables start
+    #重启服务已确保规则生效(如果防火墙处于已开启状态的话)
+    service iptables restart
+    #查看状态
+    service iptables status
+fi
 #查看iptables现有规则
 iptables -L -n
 echo " "
@@ -346,13 +386,17 @@ echo " "
 echo "安装V2Ray ..."
 bash <(curl -L -s https://install.direct/go.sh)
 #卸载V2ray官方脚本
-systemctl stop v2ray
-systemctl disable v2ray
-service v2ray stop
-#update-rc.d -f v2ray remove
-systemctl mask v2ray
-rm -rf /lib/systemd/system/v2ray.service
-rm -rf /etc/init.d/v2ray
+if [ $s_centos_ver -eq "7" ];then
+    systemctl stop v2ray.service
+    systemctl disable v2ray.service
+    systemctl mask v2ray.service
+    rm -f /lib/systemd/system/v2ray.service
+    rm -f /etc/init.d/v2ray
+else
+    service v2ray stop
+    chkconfig v2ray off
+    rm -f /etc/init.d/v2ray
+fi
 echo " "
 echo "#############################################"
 echo "安装V2Ray完成 !"
@@ -464,7 +508,22 @@ done
 echo " "
 echo "安装supervisor ..."
 easy_install supervisor
-systemctl enable supervisord.service
+if [ $s_centos_ver -eq "7" ];then
+    systemctl stop supervisord.service
+    systemctl disable supervisord.service
+    systemctl mask supervisord.service
+    rm -f /etc/init.d/supervisord
+    rm -f /usr/lib/systemd/system/supervisord.service
+    wget --no-check-certificate -O /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
+    systemctl enable supervisord.service
+else
+    service supervisord stop
+    rm -f /etc/init.d/supervisord
+    wget --no-check-certificate -O /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
+    chmod +x /etc/init.d/supervisord
+    chkconfig --add supervisord
+    chkconfig supervisord on
+fi
 echo " "
 echo "#############################################"
 echo "安装supervisor完成 !"
