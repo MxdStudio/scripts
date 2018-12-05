@@ -7,6 +7,7 @@ sleep 5
 domain=""
 subdomain=""
 fulldomain=""
+s_client_file="/root/mxd-repo/conf/serversts-client/client"
 
 echo " "
 echo "************************************************"
@@ -497,6 +498,7 @@ echo "#############################################"
 #生成ServerStatus客户端的Supervisor配置文件
 echo " "
 echo "开始读取Server列表 ..."
+s_client_key=`head -1 ${s_client_file} | awk -F "@" '{print $2}' | awk -F "=" '{print $1}'``head -1 ${s_client_file} | awk -F "=" '{print $2}' | awk -F "*" '{print $1}'`
 curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/serverstatus.list | while read line
   do
     s_name=${line%=*}
@@ -511,7 +513,7 @@ curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/
     echo ".."
     echo "..."
     echo "[program:ServerStatus-Client-Linux-${s_name}]
-command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-linux.py SERVER=${s_ip} USER=${subdomain} PASSWORD=%(ENV_S_PASS)s INTERVAL=2
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-linux.py SERVER=${s_ip} USER=${subdomain} PASSWORD=${s_client_key} INTERVAL=2
 autorestart=true
 autostart=true
 redirect_stderr=false
@@ -531,7 +533,7 @@ serverurl=AUTO" > /root/mxd-repo/conf/supervisord/ini/ServerStatus-Client-Linux-
     echo ".."
     echo "..."
     echo "[program:ServerStatus-Client-PSUtil-${s_name}]
-command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-psutil.py SERVER=${s_ip} USER=${subdomain} PASSWORD=%(ENV_S_PASS)s INTERVAL=2
+command=/usr/bin/python /root/mxd-repo/scripts/serversts-client/client-psutil.py SERVER=${s_ip} USER=${subdomain} PASSWORD=${s_client_key} INTERVAL=2
 autorestart=false
 autostart=false
 redirect_stderr=false
