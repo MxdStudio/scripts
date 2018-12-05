@@ -511,7 +511,6 @@ easy_install supervisor
 if [ $s_centos_ver -eq "7" ];then
     systemctl stop supervisord.service
     systemctl disable supervisord.service
-    systemctl mask supervisord.service
     rm -f /etc/init.d/supervisord
     rm -f /usr/lib/systemd/system/supervisord.service
     wget --no-check-certificate -O /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
