@@ -41,10 +41,6 @@ if [ -f /etc/sysconfig/supervisord ]; then
     . /etc/sysconfig/supervisord
 fi
 
-if [ -f /root/mxd-repo/conf/supervisord/supervisord ]; then
-. /root/mxd-repo/conf/supervisord/supervisord
-fi
-
 # Path to the supervisorctl script, server binary,
 # and short-form for messages.
 supervisorctl=${SUPERVISORCTL-/usr/bin/supervisorctl}
