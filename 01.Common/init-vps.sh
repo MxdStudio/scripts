@@ -213,8 +213,13 @@ echo "#############################################"
 #安装psutil并更新pip及组件到最新
 echo " "
 echo "更新pip并安装psutil ..."
-pip install --upgrade pip
-pip install psutil
+if [ $s_centos_ver -eq "7" ];then
+    pip install --upgrade pip
+    pip install psutil
+else
+    /usr/local/bin/pip2.7 install --upgrade pip
+    /usr/local/bin/pip2.7 install psutil
+fi
 echo " "
 echo "#############################################"
 echo "更新pip并安装psutil完成 !"
@@ -546,8 +551,8 @@ done
 #安装supervisor
 echo " "
 echo "安装supervisor ..."
-easy_install supervisor
 if [ $s_centos_ver -eq "7" ];then
+    easy_install supervisor
     systemctl stop supervisord.service
     systemctl disable supervisord.service
     rm -f /etc/init.d/supervisord
@@ -555,6 +560,7 @@ if [ $s_centos_ver -eq "7" ];then
     wget --no-check-certificate -O /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
     systemctl enable supervisord.service
 else
+    /usr/local/bin/easy_install-2.7 supervisor
     service supervisord stop
     rm -f /etc/init.d/supervisord
     wget --no-check-certificate -O /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
