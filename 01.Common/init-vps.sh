@@ -1,14 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 sleep 5
 
-#公共变量
-domain=""
-subdomain=""
-fulldomain=""
-s_client_file="/root/mxd-repo/conf/serversts-client/client"
-
+#判断相关文件是否已上传
+if [ ! -d "/root/mxd-repo"]; then
+　　echo "${CFAILURE}Error: 相关配置库未上传, 请先上传配置库再执行本脚本 !!!${CEND}";
+    exit 1;
+fi
 echo " "
 echo "************************************************"
 echo "* -------------------------------------------- *"
@@ -18,6 +17,14 @@ echo "* | 作      者: MxdStudio                    | *"
 echo "* -------------------------------------------- *"
 echo "************************************************"
 echo " "
+
+############
+# 公共变量 #
+############
+domain=""
+subdomain=""
+fulldomain=""
+s_client_file="/root/mxd-repo/conf/serversts-client/client"
 
 #检查参数个数
 [ $# != "2" ] && { echo "${CFAILURE}Error: 请使用'sh $0 子域名名称 内存数(兆)'的格式来执行本脚本, 例如: sh $0 www 512${CEND}"; exit 1; }
@@ -176,7 +183,7 @@ echo "开始更新并安装基础包 ..."
     if [ $s_centos_ver -eq "6" ];then
         #下载并安装python 2.7
         mkdir /root/mxd-python-temp
-        wget --no-check-certificate -N -O /root/mxd-python-temp/Python-2.7.15.tar.xz https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tar.xz
+        wget --no-check-certificate -N -qO /root/mxd-python-temp/Python-2.7.15.tar.xz https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tar.xz
         cd /root/mxd-python-temp
                 xz -d /root/mxd-python-temp/Python-2.7.15.tar.xz
         tar -xvf /root/mxd-python-temp/Python-2.7.15.tar
@@ -200,7 +207,7 @@ echo "开始更新并安装基础包 ..."
         echo "----- python2.7安装完毕! -----"
         echo "=============================="
         #安装setuptools
-        s_setuptools_ver=$(wget -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}')
+        s_setuptools_ver=$(wget --no-check-certificate -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}')
         echo " "
         echo "=============================="
         echo "setuptools最新版本号: ${s_setuptools_ver}"
