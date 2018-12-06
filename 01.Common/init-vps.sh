@@ -177,7 +177,8 @@ echo "开始更新并安装基础包 ..."
         #下载并安装python 2.7
         mkdir /root/mxd-python-temp
         wget --no-check-certificate -N -O /root/mxd-python-temp/Python-2.7.15.tar.xz https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tar.xz
-        xz -d /root/mxd-python-temp/Python-2.7.15.tar.xz
+        cd /root/mxd-python-temp
+                xz -d /root/mxd-python-temp/Python-2.7.15.tar.xz
         tar -xvf /root/mxd-python-temp/Python-2.7.15.tar
         cd /root/mxd-python-temp/Python-2.7.15
         ./configure --prefix=/usr/local
@@ -193,6 +194,7 @@ echo "开始更新并安装基础包 ..."
         #安装setuptools
         s_setuptools_ver=$(wget -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}') && echo " The Latest version of setuptools : ${s_setuptools_ver}"
         wget --no-check-certificate -N -O /root/mxd-python-temp/setuptools.tar.gz "https://github.com/pypa/setuptools/archive/v${s_setuptools_ver}.tar.gz"
+        cd /root/mxd-python-temp
         tar -xvf /root/mxd-python-temp/setuptools.tar.gz
         cd /root/mxd-python-temp/setuptools-${s_setuptools_ver}
         /usr/local/bin/python2.7 /root/mxd-python-temp/setuptools-${s_setuptools_ver}/bootstrap.py
@@ -563,8 +565,8 @@ if [ $s_centos_ver -eq "7" ];then
     systemctl enable supervisord.service
 else
     /usr/local/bin/easy_install-2.7 supervisor
-	ln -sf /usr/local/bin/supervisorctl /usr/bin/supervisorctl
-	ln -sf /usr/local/bin/supervisord /usr/bin/supervisord
+    ln -sf /usr/local/bin/supervisorctl /usr/bin/supervisorctl
+    ln -sf /usr/local/bin/supervisord /usr/bin/supervisord
     service supervisord stop
     rm -f /etc/init.d/supervisord
     wget --no-check-certificate -O /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
