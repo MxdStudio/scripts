@@ -200,7 +200,7 @@ echo "开始更新并安装基础包 ..."
         #安装pip
         curl https://bootstrap.pypa.io/get-pip.py | /usr/local/bin/python2.7 -
         #指定yum使用python2.6,否则yum将无法执行
-        cp /usr/bin/yum /usr/bin/yum.mxd.bak
+        cp /usr/bin/yum /usr/bin/yum.mxd.bak -f
         sed -i '1c #!/usr/bin/python2.6' /usr/bin/yum
         #清理文件
         cd /root
