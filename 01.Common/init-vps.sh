@@ -173,7 +173,8 @@ echo "开始更新并安装基础包 ..."
     yum provides -y '*/applydeltarpm'
     yum install -y deltarpm
     if [ $s_centos_ver -eq "7" ];then
-        yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs zlib-devel bzip2-devel openssl-devel xz-libs
+        #CentOS7
+		yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs zlib-devel bzip2-devel openssl-devel xz-libs
     else
         #CentOS6的yum最高只能安装到python2.6.6,不能支持ServerStatus客户端执行,故不用yum安装pip
         yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts iptables git crontabs zlib-devel bzip2-devel openssl-devel xz-libs
