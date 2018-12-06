@@ -16,4 +16,6 @@ curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/in
 
 eg:
 curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512
+--- or ---
+nohup curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512  > /root/init.log 2>&1 &
 ```
