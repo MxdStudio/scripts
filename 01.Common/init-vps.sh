@@ -172,7 +172,7 @@ echo "开始更新并安装基础包 ..."
 #   apt-get update -y
 #   apt-get upgrade -y
 #fi
-    #CentOS6单独安装python 2.7.15
+    #CentOS6单独安装python 2.7.15+setuptools+pip
     if [ $s_centos_ver -eq "6" ];then
         #下载并安装python 2.7
         mkdir /root/mxd-python-temp
@@ -185,28 +185,58 @@ echo "开始更新并安装基础包 ..."
         make
         make altinstall
         cd /root
-        echo "=========== /usr/local/bin/python2.7版本显示:"
+        echo " "
+        echo "=============================="
+        echo "/usr/local/bin/python2.7版本显示:"
         /usr/local/bin/python2.7 -V
-        echo "=========== 链接/usr/bin/python到/usr/local/bin/python2.7"
+        echo "------------------------------"
+        echo "链接/usr/bin/python到/usr/local/bin/python2.7"
         ln -sf /usr/local/bin/python2.7 /usr/bin/python
-        echo "=========== /usr/bin/python版本显示:"
+        echo "... OK !"
+        echo "------------------------------"
+        echo "/usr/bin/python版本显示:"
         /usr/bin/python -V
+        echo "------------------------------"
+        echo "----- python2.7安装完毕! -----"
+        echo "=============================="
         #安装setuptools
-        s_setuptools_ver=$(wget -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}') && echo " The Latest version of setuptools : ${s_setuptools_ver}"
+        s_setuptools_ver=$(wget -qO- "https://github.com/pypa/setuptools/tags"|grep "/pypa/setuptools/releases/tag/"|head -1|sed -r 's/.*tag\/(.+)\">.*/\1/'|awk -F "v" '{print $2}')
+        echo " "
+        echo "=============================="
+        echo "setuptools最新版本号: ${s_setuptools_ver}"
+        echo "------------------------------"
         wget --no-check-certificate -N -O /root/mxd-python-temp/setuptools.tar.gz "https://github.com/pypa/setuptools/archive/v${s_setuptools_ver}.tar.gz"
         cd /root/mxd-python-temp
         tar -xvf /root/mxd-python-temp/setuptools.tar.gz
         cd /root/mxd-python-temp/setuptools-${s_setuptools_ver}
         /usr/local/bin/python2.7 /root/mxd-python-temp/setuptools-${s_setuptools_ver}/bootstrap.py
         /usr/local/bin/python2.7 /root/mxd-python-temp/setuptools-${s_setuptools_ver}/setup.py install
+        echo "------------------------------"
+        echo "---- setuptools 安装完毕! ----"
+        echo "=============================="
         #安装pip
+        echo " "
+        echo "=============================="
+        echo "开始安装 pip"
+        echo "------------------------------"
         curl https://bootstrap.pypa.io/get-pip.py | /usr/local/bin/python2.7 -
+        echo "------------------------------"
+        echo "-------- pip安装完毕! --------"
+        echo "=============================="
         #指定yum使用python2.6,否则yum将无法执行
+        echo " "
+        echo "=============================="
+        echo "修正yum"
         cp /usr/bin/yum /usr/bin/yum.mxd.bak -f
         sed -i '1c #!/usr/bin/python2.6' /usr/bin/yum
+        echo "------------------------------"
+        echo "... OK !"
+        echo "=============================="
         #清理文件
         cd /root
         rm -rf /root/mxd-python-temp
+        echo " "
+        echo "清理python2.7安装临时文件... OK !"
     fi
 echo " "
 echo "#############################################"
