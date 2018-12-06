@@ -4,23 +4,18 @@ export PATH
 sleep 5
 
 #=================================================
-#	System Required: CentOS 6+
-#	Description: Init VPS for myself
-#	Version: 1.0
-#	Author: MxdStudio
+#   System Required: CentOS 6+
+#   Description: Init VPS for myself
+#   Version: 1.0
+#   Author: MxdStudio
 #=================================================
-
-Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
-Info="${Green_font_prefix}[信息]${Font_color_suffix}"
-Error="${Red_font_prefix}[错误]${Font_color_suffix}"
-Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #判断相关文件是否已上传
 if [ ! -d "/root/mxd-repo" ]; then
-　　echo "${Error}: 相关配置库未上传, 请先上传配置库再执行本脚本 !!!";
+　　echo "相关配置库未上传, 请先上传配置库再执行本脚本 !!!";
     exit 1;
 else
-    echo "${Info}: 监测到相关配置库已上传, 开始执行脚本 ...";
+    echo "监测到相关配置库已上传, 开始执行脚本 ...";
 fi
 echo " "
 echo "************************************************"
@@ -42,10 +37,10 @@ s_client_file="/root/mxd-repo/conf/serversts-client/client"
 #s_ip=`/sbin/ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
 
 #检查参数个数
-[ $# != "2" ] && { echo "${Error}: 请使用${Green_background_prefix} sh $0 子域名名称 内存数(兆) ${Font_color_suffix}的格式来执行本脚本, 例如: sh $0 www 512"; exit 1; }
+[ $# != "2" ] && { echo "请使用 'sh $0 子域名名称 内存数(兆)' 的格式来执行本脚本, 例如: sh $0 www 512"; exit 1; }
 #检查参数是否为空
 if [ ! -n "$1" ] ;then
-    echo "${Error}: [子域名名称]参数不能为空!"
+    echo "[子域名名称]参数不能为空!"
     exit 1
 else
     domain=`curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/domain-suffix | cat`
@@ -57,7 +52,7 @@ else
     echo "#############################################"
 fi
 if [ ! -n "$2" ] ;then
-    echo "${Error}: [内存数]参数不能为空!"
+    echo "[内存数]参数不能为空!"
     exit 1
 else
     echo ""
@@ -70,7 +65,7 @@ fi
 #检查Root权限
 echo " "
 echo "开始检查ROOT权限 ..."
-[ $(id -u) != "0" ] && { echo " ${Error}: 必须以Root身份执行本脚本!"; exit 1; }
+[ $(id -u) != "0" ] && { echo " 必须以Root身份执行本脚本!"; exit 1; }
 echo " "
 echo "#############################################"
 echo "ROOT权限检查OK !"
@@ -87,7 +82,7 @@ if [ -f /etc/redhat-release ];then
 #    elif [ ! -z "`cat /etc/issue | grep Ubuntu`" ];then
 #        OS='Ubuntu'
     else
-        echo " ${Error}: 本脚本只支持CentOS, 不支持当前系统, 请重新安装系统或重试!"
+        echo " 本脚本只支持CentOS, 不支持当前系统, 请重新安装系统或重试!"
         exit 1
 fi
 echo " "
@@ -103,7 +98,7 @@ s_centos_ver=`rpm -q centos-release|cut -d- -f3`
 if [ $s_centos_ver -eq "6" -o $s_centos_ver -eq "7" ];then
         echo "..."
     else
-        echo " ${Error}: 本脚本只支持CentOS 6 和 7, 不支持当前版本 ${s_centos_ver} , 请重新安装系统或重试!"
+        echo " 本脚本只支持CentOS 6 和 7, 不支持当前版本 ${s_centos_ver} , 请重新安装系统或重试!"
         exit 1
 fi
 echo " "
@@ -174,7 +169,7 @@ echo "开始更新并安装基础包 ..."
     yum install -y deltarpm
     if [ $s_centos_ver -eq "7" ];then
         #CentOS7
-		yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs zlib-devel bzip2-devel openssl-devel xz-libs
+        yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs zlib-devel bzip2-devel openssl-devel xz-libs
     else
         #CentOS6的yum最高只能安装到python2.6.6,不能支持ServerStatus客户端执行,故不用yum安装pip
         yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts iptables git crontabs zlib-devel bzip2-devel openssl-devel xz-libs
