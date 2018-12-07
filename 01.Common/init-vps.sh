@@ -43,7 +43,6 @@ if [ ! -n "$1" ] ;then
     echo "[子域名名称]参数不能为空!"
     exit 1
 else
-    yum install curl -y
     domain=`curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/domain-suffix | cat`
     sleep 2
     subdomain=$1
@@ -160,8 +159,6 @@ locale
 echo " "
 echo "开始更新并安装基础包 ..."
 #if [[ ${OS} == 'CentOS' ]];then
-    yum clean all -y
-    yum makecache -y
     yum erase epel-release -y
     yum install epel-release -y
     yum provides -y '*/applydeltarpm'
