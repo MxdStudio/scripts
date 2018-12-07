@@ -12,10 +12,10 @@
 
 * 在目标机器上执行以下命令：
 ```bash
-curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- 主机子域名 主机内存数(M)
+curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- 主机子域名 主机内存数(M)
 
 eg:
-curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512
+curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512
 --- or ---
-nohup curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512  > /root/init.log 2>&1 &
+nohup curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/init-vps.sh | bash -s -- www 512  > /root/init.log 2>&1 &
 ```
