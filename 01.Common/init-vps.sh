@@ -159,7 +159,7 @@ locale
 echo " "
 echo "开始更新并安装基础包 ..."
 #if [[ ${OS} == 'CentOS' ]];then
-    yum erase epel-release -y
+    #yum erase epel-release -y
     yum install epel-release -y
     yum provides -y '*/applydeltarpm'
     yum install -y deltarpm
