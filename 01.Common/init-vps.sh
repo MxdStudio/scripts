@@ -43,7 +43,8 @@ if [ ! -n "$1" ] ;then
     echo "[子域名名称]参数不能为空!"
     exit 1
 else
-    domain=`curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/domain-suffix | cat`
+    yum install curl -y
+    domain=`curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/domain-suffix | cat`
     sleep 2
     subdomain=$1
     fulldomain=${subdomain}${domain}
@@ -163,10 +164,10 @@ echo "开始更新并安装基础包 ..."
     yum makecache -y
     yum erase epel-release -y
     yum install epel-release -y
-    yum clean all -y
-    yum makecache -y
     yum provides -y '*/applydeltarpm'
     yum install -y deltarpm
+    yum clean all -y
+    yum makecache -y
     if [ $s_centos_ver -eq "7" ];then
         #CentOS7
         yum install -y curl wget unzip ntp ntpdate net-tools bitmap-fonts bitmap-fonts-cjk iptables iptables-services python-setuptools git python-devel python-pip crontabs zlib-devel bzip2-devel openssl-devel xz-libs
@@ -223,7 +224,7 @@ echo "开始更新并安装基础包 ..."
         echo "=============================="
         echo "setuptools最新版本号: ${s_setuptools_ver}"
         echo "------------------------------"
-        wget --no-check-certificate -N -O /root/mxd-python-temp/setuptools.tar.gz "https://github.com/pypa/setuptools/archive/v${s_setuptools_ver}.tar.gz"
+        wget --no-check-certificate -N -qO /root/mxd-python-temp/setuptools.tar.gz "https://github.com/pypa/setuptools/archive/v${s_setuptools_ver}.tar.gz"
         cd /root/mxd-python-temp
         tar -xvf /root/mxd-python-temp/setuptools.tar.gz
         cd /root/mxd-python-temp/setuptools-${s_setuptools_ver}
@@ -528,7 +529,7 @@ echo "#############################################"
 #安装Caddy
 echo " "
 echo "安装Caddy ..."
-curl https://getcaddy.com | bash -s personal hook.service,http.authz,http.cgi,http.cors,http.filemanager,http.git,http.login,http.minify,http.proxyprotocol,http.realip,http.expires
+curl -sSL https://getcaddy.com | bash -s personal hook.service,http.authz,http.cgi,http.cors,http.filemanager,http.git,http.login,http.minify,http.proxyprotocol,http.realip,http.expires
 echo " "
 echo "#############################################"
 echo "安装Caddy完成 !"
@@ -538,8 +539,8 @@ echo "#############################################"
 #配置ServerStatus客户端
 echo " "
 echo "下载ServerStatus客户端 ..."
-wget --no-check-certificate -O /root/mxd-repo/scripts/serversts-client/client-linux.py 'https://raw.githubusercontent.com/cppla/ServerStatus/master/clients/client-linux.py'
-wget --no-check-certificate -O /root/mxd-repo/scripts/serversts-client/client-psutil.py 'https://raw.githubusercontent.com/cppla/ServerStatus/master/clients/client-psutil.py'
+wget --no-check-certificate -qO /root/mxd-repo/scripts/serversts-client/client-linux.py 'https://raw.githubusercontent.com/cppla/ServerStatus/master/clients/client-linux.py'
+wget --no-check-certificate -qO /root/mxd-repo/scripts/serversts-client/client-psutil.py 'https://raw.githubusercontent.com/cppla/ServerStatus/master/clients/client-psutil.py'
 echo " "
 echo "#############################################"
 echo "ServerStatus客户端下载完成 !"
@@ -549,7 +550,7 @@ echo "#############################################"
 echo " "
 echo "开始读取Server列表 ..."
 s_client_key=`head -1 ${s_client_file} | awk -F "@" '{print $2}' | awk -F "=" '{print $1}'``head -1 ${s_client_file} | awk -F "=" '{print $2}' | awk -F "*" '{print $1}'`
-curl -SL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/serverstatus.list | while read line
+curl -sSL https://raw.githubusercontent.com/MxdStudio/scripts/master/00.Constant/serverstatus.list | while read line
   do
     s_name=${line%=*}
     s_ip=${line#*=}
@@ -609,7 +610,7 @@ if [ $s_centos_ver -eq "7" ];then
     systemctl disable supervisord.service
     rm -f /etc/init.d/supervisord
     rm -f /usr/lib/systemd/system/supervisord.service
-    wget --no-check-certificate -O /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
+    wget --no-check-certificate -qO /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
     systemctl enable supervisord.service
 else
     /usr/local/bin/easy_install-2.7 supervisor
@@ -617,7 +618,7 @@ else
     ln -sf /usr/local/bin/supervisord /usr/bin/supervisord
     service supervisord stop
     rm -f /etc/init.d/supervisord
-    wget --no-check-certificate -O /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
+    wget --no-check-certificate -qO /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
     chmod +x /etc/init.d/supervisord
     chkconfig --add supervisord
     chkconfig supervisord on
