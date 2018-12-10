@@ -635,12 +635,15 @@ echo "安装supervisor完成 !"
 echo "#############################################"
 echo " "
 seconds_left=30
-echo "脚本全部执行完毕, 将于${seconds_left}秒后自动重启, 期间可以通过 Ctrl+C 取消重启."
-echo "倒计时开始 ..."
+echo "脚本全部执行完毕, 将于${seconds_left}秒后自动重启."
+echo "倒计时期间, 可以通过 Ctrl+C 取消重启计划."
+echo " "
+echo "重启倒计时开始 ..."
 while [ $seconds_left -gt 0 ];do
   echo -n $seconds_left
   sleep 1
   seconds_left=$(($seconds_left - 1))
   echo -ne "\r     \r" #清除本行文字
 done
+echo "重启 !"
 reboot
