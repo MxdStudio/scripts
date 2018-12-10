@@ -22,7 +22,7 @@ echo "************************************************"
 echo "* -------------------------------------------- *"
 echo "* | MxdStudio自用VPS初始化脚本               | *"
 echo "* |   --- 本脚本只适用于CentOS 6 和 7        | *"
-echo "* | 作      者: MxdStudio                    | *"
+echo "* | 作者: MxdStudio                          | *"
 echo "* -------------------------------------------- *"
 echo "************************************************"
 echo " "
@@ -483,11 +483,14 @@ if [ $s_centos_ver -eq "7" ];then
     systemctl stop v2ray.service
     systemctl disable v2ray.service
     systemctl mask v2ray.service
-    rm -f /lib/systemd/system/v2ray.service
-    rm -f /etc/init.d/v2ray
+    if [ ! -f "/lib/systemd/system/v2ray.service" ]; then
+        rm -f /lib/systemd/system/v2ray.service
+    fi
 else
     service v2ray stop
     chkconfig v2ray off
+fi
+if [ ! -f "/etc/init.d/v2ray" ]; then
     rm -f /etc/init.d/v2ray
 fi
 echo " "
@@ -605,8 +608,12 @@ if [ $s_centos_ver -eq "7" ];then
     easy_install supervisor
     systemctl stop supervisord.service
     systemctl disable supervisord.service
-    rm -f /etc/init.d/supervisord
-    rm -f /usr/lib/systemd/system/supervisord.service
+    if [ ! -f "/etc/init.d/supervisord" ]; then
+        rm -f /etc/init.d/supervisord
+    fi
+    if [ ! -f "/usr/lib/systemd/system/supervisord.service" ]; then
+        rm -f /usr/lib/systemd/system/supervisord.service
+    fi
     wget --no-check-certificate -qO /usr/lib/systemd/system/supervisord.service 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS7/supervisord.service'
     systemctl enable supervisord.service
 else
@@ -614,7 +621,9 @@ else
     ln -sf /usr/local/bin/supervisorctl /usr/bin/supervisorctl
     ln -sf /usr/local/bin/supervisord /usr/bin/supervisord
     service supervisord stop
-    rm -f /etc/init.d/supervisord
+    if [ ! -f "/etc/init.d/supervisord" ]; then
+        rm -f /etc/init.d/supervisord
+    fi
     wget --no-check-certificate -qO /etc/init.d/supervisord 'https://raw.githubusercontent.com/MxdStudio/scripts/master/01.Common/CentOS6/supervisord.init.d'
     chmod +x /etc/init.d/supervisord
     chkconfig --add supervisord
@@ -625,7 +634,13 @@ echo "#############################################"
 echo "安装supervisor完成 !"
 echo "#############################################"
 echo " "
-echo "脚本全部执行完毕, 将于30秒后自动重启 ..."
-sleep 30
+seconds_left=30
+echo "脚本全部执行完毕, 将于${seconds_left}秒后自动重启, 期间可以通过 Ctrl+C 取消重启."
+echo "倒计时开始 ..."
+while [ $seconds_left -gt 0 ];do
+  echo -n $seconds_left
+  sleep 1
+  seconds_left=$(($seconds_left - 1))
+  echo -ne "\r     \r" #清除本行文字
+done
 reboot
-
