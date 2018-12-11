@@ -311,7 +311,8 @@ echo "配置SSH ..."
 #chmod 700 /root/.ssh/authorized_keys
 chmod 600 /root/.ssh
 #vi /etc/ssh/sshd_config
-echo "Port 26133" >> /etc/ssh/sshd_config
+echo "
+Port 26133" >> /etc/ssh/sshd_config
 echo "Port 29282" >> /etc/ssh/sshd_config
 #sed -i "/PasswordAuthentication no/c PasswordAuthentication no" /etc/ssh/sshd_config
 #sed -i "/RSAAuthentication no/c RSAAuthentication yes" /etc/ssh/sshd_config
