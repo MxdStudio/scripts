@@ -342,9 +342,11 @@ echo "#############################################"
 #设置file-max
 echo " "
 echo "设置limits ..."
-echo "fs.file-max=${nofile}" >> /etc/sysctl.conf
+echo "
+fs.file-max=${nofile}" >> /etc/sysctl.conf
 sysctl -p
-echo "* hard nproc  65536" >> /etc/security/limits.conf
+echo "
+* hard nproc  65536" >> /etc/security/limits.conf
 echo "* soft nproc  65536" >> /etc/security/limits.conf
 echo "* hard nofile ${nofile}" >> /etc/security/limits.conf
 echo "* soft nofile ${nofile}" >> /etc/security/limits.conf
