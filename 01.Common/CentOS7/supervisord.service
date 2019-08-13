@@ -4,7 +4,7 @@ Description=Supervisor daemon
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/supervisord -c /root/mxd-repo/conf/supervisord/supervisord.conf
+ExecStart=/usr/bin/supervisord -c /usr/local/mxd-repo/conf/supervisord/supervisord.conf
 ExecStop=/usr/bin/supervisorctl $OPTIONS shutdown
 ExecReload=/usr/bin/supervisorctl $OPTIONS reload
 KillMode=process
